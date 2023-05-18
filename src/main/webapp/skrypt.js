@@ -5,14 +5,12 @@ function wyslijAsync(url, metoda, typDanych, przesylanyDokument) {
 
     let requester = new XMLHttpRequest();
 
-    metoda = "GET";
-    typDanych = "text/plain";
+    metoda = metoda || "GET";
+    typDanych = typDanych || "text/plain";
 
     requester.open(metoda, url);
 
     requester.setRequestHeader("Content-Type", typDanych);
-
-    requester.send(null);
 
     requester.onreadystatechange = function() {
         el = document.getElementById("wyniki");
@@ -22,21 +20,22 @@ function wyslijAsync(url, metoda, typDanych, przesylanyDokument) {
         if (requester.readyState == 4) {
             if (requester.status === 200) {
                 let rezultat = '';
-                let odpowiedz = requester.responseText.split(";");
-                odpowiedz.forEach(wynik => {
-                    rezultat += '<div class="lista">' + wynik + "</div>";
-                });
+                let odpowiedzXML = requester.responseXML.getElementsByTagName("sugestia");
+                for (let wynik of odpowiedzXML) {
+                    rezultat += '<div id="class">' + wynik.firstChild.nodeValue + '</div>';
+                }
                 el.innerHTML = rezultat;
             } else {
                 console.log("blad o statusie ", requester.status);
             }
         }
     }
+    requester.send(przesylanyDokument);
 
     return requester;
 }
 
 function pobierzSugestie() {
-    let wartosc = document.getElementById("pole").value;
-    wyslijAsync("sugestieBackend?wartosc="+wartosc);
+    let wartosc = { wartosc: document.getElementById("pole").value };
+    wyslijAsync("sugestie", "POST", "application/json", JSON.stringify(wartosc));
 }
