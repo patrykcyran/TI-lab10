@@ -15,16 +15,27 @@ public class sugestieBackend extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/plain");
+        response.setContentType("text/xml");
         response.setCharacterEncoding("utf-8");
+        request.setCharacterEncoding("utf-8");
+        PrintWriter out = response.getWriter();
+
         String query = ""+request.getParameter("wartosc");
 
-        try (PrintWriter out = response.getWriter()) {
+        out.println("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        out.println("<sugestie>");
+
+        try {
             for (String samochod : lista) {
                 if (samochod.startsWith(query)) {
-                    out.println("<div class='lista'>" + samochod + "</div>");
+                    out.print("   <sugestia>");
+                    out.print(samochod);
+                    out.println("</sugestia>");
                 }
             }
+        } finally {
+            out.println("</sugestie>");
+            out.close();
         }
     }
 

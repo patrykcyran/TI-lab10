@@ -1,12 +1,12 @@
-function wyslijAsync(url) {
+function wyslijAsync(url, metoda, typDanych, przesylanyDokument) {
     if (!window.XMLHttpRequest) {
         return null;
     }
 
     let requester = new XMLHttpRequest();
 
-    let metoda = "GET";
-    let typDanych = "text/plain";
+    metoda = "GET";
+    typDanych = "text/plain";
 
     requester.open(metoda, url);
 
@@ -15,15 +15,22 @@ function wyslijAsync(url) {
     requester.send(null);
 
     requester.onreadystatechange = function() {
+        el = document.getElementById("wyniki");
+        el.style.display = "block";
+        el.innerHtml = "Ładuję dane...";
+
         if (requester.readyState == 4) {
             if (requester.status === 200) {
-                console.log("wyszstko ok, status " + requester.status);
+                let rezultat = '';
+                let odpowiedz = requester.responseText.split(";");
+                odpowiedz.forEach(wynik => {
+                    rezultat += '<div class="lista">' + wynik + "</div>";
+                });
+                el.innerHTML = rezultat;
             } else {
                 console.log("blad o statusie ", requester.status);
             }
         }
-        console.log(requester.readyState);
-        console.log(requester.status);
     }
 
     return requester;
