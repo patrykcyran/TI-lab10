@@ -17,7 +17,7 @@ function wyslijAsync(url, metoda, typDanych, przesylanyDokument) {
         el.style.display = "block";
         el.innerHtml = "Ładuję dane...";
 
-        if (requester.readyState == 4) {
+        if (requester.readyState === 4) {
             if (requester.status === 200) {
                 let odpowiedzTXT = requester.responseText;
                 let odpowiedz = JSON.parse(odpowiedzTXT);
@@ -39,4 +39,30 @@ function wyslijAsync(url, metoda, typDanych, przesylanyDokument) {
 function pobierzSugestie() {
     let wartosc = { wartosc: document.getElementById("pole").value };
     wyslijAsync("sugestie", "POST", "application/json", JSON.stringify(wartosc));
+}
+
+function pobierzSugestiejQuery() {
+    let parametry = {};
+    parametry.wartosc = $("#pole2").val();
+    $('#pole2').val();
+    $("#wyniki2").css("display", "block").html("");
+
+    $("#wyniki2").html("Laduje dane...");
+    $.ajax( {
+        url: 'sugestie',
+        type: 'POST',
+        dataType: 'json',
+        data: JSON.stringify(parametry),
+        contentType: 'application/json',
+        success: function(data) {
+            $("#wyniki2").html("");
+            $.each(data.sugestia, function(index, wynik) {
+                $("#wyniki2").append('<div class="lista">' + wynik + '</div>');
+            })
+        },
+        error: function(response) {
+            console.log("status: " + response.status);
+            $("#wyniki2").html("Blad podczas odbierania danych!");
+        }
+    });
 }
