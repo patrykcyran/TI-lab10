@@ -19,10 +19,11 @@ function wyslijAsync(url, metoda, typDanych, przesylanyDokument) {
 
         if (requester.readyState == 4) {
             if (requester.status === 200) {
-                let rezultat = '';
-                let odpowiedzXML = requester.responseXML.getElementsByTagName("sugestia");
-                for (let wynik of odpowiedzXML) {
-                    rezultat += '<div id="class">' + wynik.firstChild.nodeValue + '</div>';
+                let odpowiedzTXT = requester.responseText;
+                let odpowiedz = JSON.parse(odpowiedzTXT);
+                let rezultat = "";
+                for (let wynik of odpowiedz.sugestia) {
+                    rezultat += '<div id="class">' + wynik + '</div>';
                 }
                 el.innerHTML = rezultat;
             } else {
