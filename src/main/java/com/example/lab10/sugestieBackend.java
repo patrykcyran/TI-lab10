@@ -27,7 +27,7 @@ public class sugestieBackend extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         Reader wejscie = new InputStreamReader(request.getInputStream());
-        JSONObject json = new JSONObject();
+        JSONObject json;
         JSONParser jsonParser = new JSONParser();
 
         try {
@@ -40,7 +40,7 @@ public class sugestieBackend extends HttpServlet {
         ArrayList<String> sugestia = new ArrayList<>();
         try {
             for (String samochod: lista) {
-                if (samochod.startsWith(query)) {
+                if (samochod.startsWith(query.toUpperCase())) {
                     sugestia.add(samochod);
                 }
             }
@@ -52,7 +52,7 @@ public class sugestieBackend extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doGet(request, response);
     }
 }

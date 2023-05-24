@@ -23,7 +23,7 @@ function wyslijAsync(url, metoda, typDanych, przesylanyDokument) {
                 let odpowiedz = JSON.parse(odpowiedzTXT);
                 let rezultat = "";
                 for (let wynik of odpowiedz.sugestia) {
-                    rezultat += '<div id="class">' + wynik + '</div>';
+                    rezultat += '<div id="class" onclick="wybierzMarke(\'' + wynik + '\')">' + wynik + '</div>';
                 }
                 el.innerHTML = rezultat;
             } else {
@@ -36,14 +36,42 @@ function wyslijAsync(url, metoda, typDanych, przesylanyDokument) {
     return requester;
 }
 
+function wybierzMarke(marka) {
+    document.getElementById("pole").value = marka;
+    wycziscDiv();
+}
+
+function wybierzMarke2(marka) {
+    document.getElementById("pole2").value = marka;
+    wycziscDiv2();
+}
+
 function pobierzSugestie() {
-    let wartosc = { wartosc: document.getElementById("pole").value };
-    wyslijAsync("sugestie", "POST", "application/json", JSON.stringify(wartosc));
+    let wartosc = { wartosc: document.getElementById("pole").value.trim() };
+    if (wartosc.wartosc === "") {
+        wycziscDiv();
+    } else {
+        wyslijAsync("sugestie", "POST", "application/json", JSON.stringify(wartosc));
+    }
+}
+
+function wycziscDiv() {
+    document.getElementById("wyniki").innerHTML = '';
+}
+
+function wycziscDiv2() {
+    document.getElementById("wyniki2").innerHTML = '';
 }
 
 function pobierzSugestiejQuery() {
     let parametry = {};
     parametry.wartosc = $("#pole2").val();
+
+    if (parametry.wartosc.trim() === "") {
+        wycziscDiv2();
+        return;
+    }
+
     $('#pole2').val();
     $("#wyniki2").css("display", "block").html("");
 
@@ -57,7 +85,7 @@ function pobierzSugestiejQuery() {
         success: function(data) {
             $("#wyniki2").html("");
             $.each(data.sugestia, function(index, wynik) {
-                $("#wyniki2").append('<div class="lista">' + wynik + '</div>');
+                $("#wyniki2").append('<div class="lista" onclick="wybierzMarke2(\'' + wynik + '\')">' + wynik + '</div>');
             })
         },
         error: function(response) {
@@ -65,4 +93,6 @@ function pobierzSugestiejQuery() {
             $("#wyniki2").html("Blad podczas odbierania danych!");
         }
     });
+
+
 }
